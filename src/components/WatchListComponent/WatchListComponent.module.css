@@ -11,3 +11,6 @@
   flex: 0 0 24.333%;
   min-width: 280px;
 }
+.done {
+  font-weight: bold;
+}

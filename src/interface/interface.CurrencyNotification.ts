@@ -9,4 +9,5 @@ export interface CurrencyNotification {
   id: string;
   isAlertEnabled: boolean;
   isNotified: boolean;
+  date: string | null;
 }

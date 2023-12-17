@@ -18,10 +18,8 @@ export const fetchConversionRate = async (
     );
 
     const latestQuote = response.data.data[response.data.data.length - 1][4];
-
     return latestQuote as number;
   } catch (error) {
-    console.error("Ошибка при получении курса валют:", error);
-    return null;
+    throw error;
   }
 };

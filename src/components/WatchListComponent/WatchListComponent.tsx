@@ -9,7 +9,7 @@ import Card from "antd/es/card/Card";
 import styles from "./WatchListComponent.module.css";
 
 import React, { FC } from "react";
-import { CurrencyNotification } from "../../redux/slices/interface.CurrencyNotification";
+import { CurrencyNotification } from "../../interface/interface.CurrencyNotification";
 
 interface WatchListProps {
   watchList: CurrencyNotification[];
@@ -89,16 +89,17 @@ const WatchListComponent: FC<WatchListProps> = ({
                   color: item.direction === "up" ? "green" : "red",
                 }}
               >
-                <div>Исходная сумма: {item.result}</div>
-                <div>
+                <div className={styles.done}>
                   Цель достигнута!{" "}
                   {item.direction === "up"
                     ? item.threshold + item.result
                     : item.threshold - item.result}
                 </div>
+                <div>Исходная сумма: {item.result}</div>
                 <div>
                   Пара: {item.fromCurrency}/{item.toCurrency}
                 </div>
+                <div>Время события: {item.date}</div>
               </div>
             ) : (
               <div>

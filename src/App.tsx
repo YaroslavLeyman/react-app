@@ -3,7 +3,7 @@
 import { Divider, Layout, theme } from "antd";
 import "antd/dist/reset.css";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import CurrencyConverter from "./components/CurrencyConverter/CurrencyConverter";
@@ -15,14 +15,14 @@ import FooterComponent from "./components/FooterComponent/FooterComponent";
 
 import { currencyPairs } from "./constants/currencyPairs";
 import { RootState } from "./redux/store";
-import { CurrencyNotification } from "./redux/slices/interface.CurrencyNotification";
+import { CurrencyNotification } from "./interface/interface.CurrencyNotification";
 import { fetchConversionRate } from "./services/api/fetchConversionRate";
-
-
+import { ErrorModalContext } from "./context/ErrorModalContext";
 
 const { Content } = Layout;
 
 function App() {
+  const { showError } = useContext(ErrorModalContext);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -46,6 +46,7 @@ function App() {
         result,
         isAlertEnabled: true,
         isNotified: false,
+        date: null,
       };
 
       setWatchList([...watchList, newNotification]);
@@ -68,9 +69,7 @@ function App() {
     updates: Partial<CurrencyNotification>
   ) => {
     setWatchList(
-      watchList.map((item) =>
-        item.id === id ? { ...item, ...updates, isNotified: true } : item
-      )
+      watchList.map((item) => (item.id === id ? { ...item, ...updates } : item))
     );
   };
 
@@ -94,6 +93,8 @@ function App() {
                   ) {
                     updateNotification(notification.id, {
                       isAlertEnabled: false,
+                      isNotified: true,
+                      date: new Date().toLocaleString(),
                     });
                     openNotification(
                       "Цель достигнута",
@@ -101,7 +102,7 @@ function App() {
                         notification.toCurrency
                       } достигла цели ${
                         notification.threshold + notification.result
-                      }`
+                      } время: ${new Date().toLocaleString()}`
                     );
                   }
                 }
@@ -109,7 +110,14 @@ function App() {
             }
           })
         ).catch((error) => {
-          console.error("Error checking rates:", error);
+          console.log(error);
+          watchList.forEach((notification) => {
+            updateNotification(notification.id, {
+              isNotified: false,
+              isAlertEnabled: false,
+            });
+          });
+          showError("Отслеживание курса валют завершилось с ошибкой");
         });
       }, 600);
     }

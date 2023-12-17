@@ -3,7 +3,7 @@ import { InputNumber, Select } from "antd";
 import { RetweetOutlined } from "@ant-design/icons";
 import styles from "./CurrencyConverter.module.css";
 
-import React, { FC, useEffect } from "react";
+import React, { FC, useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { currencyPairs } from "../../constants/currencyPairs";
 
@@ -15,9 +15,10 @@ import {
 } from "../../redux/slices/currencySlice";
 import { RootState } from "../../redux/store";
 import { fetchConversionRate } from "../../services/api/fetchConversionRate";
-import axios from "axios";
+import { ErrorModalContext } from "../../context/ErrorModalContext";
 
 const CurrencyConverter: FC = () => {
+  const { showError } = useContext(ErrorModalContext);
   const dispatch = useDispatch();
   const { fromCurrency, toCurrency, amount, result } = useSelector(
     (state: RootState) => state.currency
@@ -29,28 +30,12 @@ const CurrencyConverter: FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        fetchConversionRate(pairID).then((conversionRate) => {
-          if (conversionRate) {
-            dispatch(setResult(amount * conversionRate));
-          }
-        });
-
-        const response = await axios.get(
-          `https://api.investing.com/api/financialdata/${pairID}/historical/chart/`,
-          {
-            params: {
-              interval: "PT1M",
-              pointscount: 60,
-            },
-            headers: {
-              "x-api-key": process.env.REACT_APP_API_KEY,
-            },
-          }
-        );
-        const conversionRate = response.data.data[0][4];
-        dispatch(setResult(amount * conversionRate));
+        const conversionRate = await fetchConversionRate(pairID);
+        if (conversionRate) {
+          dispatch(setResult(amount * conversionRate));
+        }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        showError("Не удалось получить курс валют:");
       }
     };
 
