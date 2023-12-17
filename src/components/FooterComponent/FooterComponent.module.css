@@ -1,0 +1,13 @@
+.footer {
+  text-align: center;
+  background-color: #0a121a;
+  color: #fff;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 16px;
+}
+
+.footerLink {
+  color: #4096ff;
+}

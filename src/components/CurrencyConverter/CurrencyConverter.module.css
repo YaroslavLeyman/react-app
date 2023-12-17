@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.resultDisplay {
+  font-weight: bold;
+  font-size: 14px;
+}

@@ -1,0 +1,13 @@
+.container {
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.watchListItem {
+  flex: 0 0 24.333%;
+  min-width: 280px;
+}
